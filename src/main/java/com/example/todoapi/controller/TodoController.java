@@ -1,5 +1,6 @@
 package com.example.todoapi.controller;
 
+import com.example.todoapi.model.request.SearchTodoRequest;
 import com.example.todoapi.model.request.TodoRequest;
 import com.example.todoapi.model.response.TodoResponse;
 import com.example.todoapi.service.TodoService;
@@ -10,32 +11,39 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api")
 public class TodoController {
     @Autowired
     private TodoService todoService;
 
-    @GetMapping("/search/{title}/{page}")
-    public List<TodoResponse> searchTodo(@PathVariable(name = "title") String title, @PathVariable(name = "page") int page) {
-        return todoService.searchTodo(title, page);
+
+    @PostMapping("/search")
+    public List<TodoResponse> searchTodo(@RequestBody SearchTodoRequest searchTodoRequest) {
+        return todoService.searchTodo(searchTodoRequest.getTitle(), searchTodoRequest.getPage());
     }
 
     @PostMapping("")
     public ResponseEntity<String> addTodo(@RequestBody TodoRequest todoRequest) {
         todoService.saveTodo(todoRequest);
-        return new ResponseEntity<>("Add Todo successful !", HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PutMapping("")
     public ResponseEntity<String> updateTodo(@RequestBody TodoRequest todoRequest) {
         todoService.saveTodo(todoRequest);
-        return new ResponseEntity<>("Update Todo successful !", HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public TodoResponse getTodo(@PathVariable(value = "id") Integer id) {
+        return todoService.getTodo(id);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteTodo(@PathVariable(value = "id") Integer id) {
         todoService.deleteTodo(id);
-        return new ResponseEntity<>("Delete Todo successful !", HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

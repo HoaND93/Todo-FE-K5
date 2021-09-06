@@ -56,6 +56,15 @@ public class TodoService {
         todoRepository.deleteById(id);
     }
 
+    public TodoResponse getTodo(Integer id) {
+        Optional<TodoEntity> entityOp =
+                todoRepository.findById(id);
+        return entityOp
+                .stream()
+                .map(entity -> modelMapper.map(entity, TodoResponse.class))
+                .collect(Collectors.toList()).get(0);
+    }
+
     private TodoResponse mappingResponse(TodoEntity entity) {
         TodoResponse response = modelMapper.map(entity, TodoResponse.class);
         response.setStatus(Enums.TodoStatus.findByCode(entity.getStatus()).getValue());
